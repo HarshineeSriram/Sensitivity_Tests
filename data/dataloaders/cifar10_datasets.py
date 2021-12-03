@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(drive, os.sep, *path.split(os.sep)[:2]))
 import ssl
 import torch
 import torchvision
-from utils.utils import cifar10_normalization, cifar10_image_transform
+from utils.utils import cifar10_image_transform
 
 ssl._create_default_https_context = ssl._create_unverified_context
 

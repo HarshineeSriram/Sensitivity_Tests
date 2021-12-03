@@ -14,6 +14,7 @@ from PIL import Image
 imagenet_path = os.path.join(drive, os.sep, *path.split(os.sep)[:-1], 'datasets', 'imagenet')
 train_path = os.path.join(imagenet_path, 'data', 'train')
 validation_path = os.path.join(imagenet_path, 'data', 'val')
+external_test_path = os.path.join(imagenet_path, 'data', 'external_test')
 test_path = os.path.join(imagenet_path, 'data', 'test')
 
 
@@ -27,12 +28,17 @@ class Imagenet_Train_Val():
         self.train_transform = imagenet_train_transform()
         self.validation_dir = validation_path
         self.validation_transform = imagenet_test_transform()
+        self.external_test_dir = external_test_path
+        self.external_transform = imagenet_test_transform()
 
     def train_dataset(self):
         return torchvision.datasets.ImageFolder(self.train_dir, self.train_transform)
 
     def validation_dataset(self):
         return torchvision.datasets.ImageFolder(self.validation_dir, self.validation_transform)
+
+    def external_test_dataset(self):
+        return torchvision.datasets.ImageFolder(self.external_test_dir, self.external_transform)
 
 
 # Describing a custom dataloader for the test folder

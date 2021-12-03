@@ -3,6 +3,7 @@ drive, path = os.path.splitdrive(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(drive, os.sep, *path.split(os.sep)[:2]))
 from auxiliary.settings import batch_size, num_workers, seed
 from data.dataloaders.cifar10_datasets import Cifar10datasets
+from utils.utils import cifar10_class_from_idx
 import torch
 import numpy as np
 

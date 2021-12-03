@@ -11,17 +11,18 @@ sys.path.insert(0, os.path.join(drive, os.sep, *path.split(os.sep)[:2]))
 # --------------------------------------------------------------------------------------------
 torch.manual_seed(seed)
 np.random.seed(seed)
-
-
 # --------------------------------------------------------------------------------------------
+
 
 class ImagenetDataloader:
 
     def __init__(self) -> None:
         self.train_val = Imagenet_Train_Val()
+
         self.train_dataset = self.train_val.train_dataset()
         self.validation_dataset = self.train_val.validation_dataset()
         self.test_dataset = Imagenet_test()
+        self.external_test_dataset = self.train_val.external_test_dataset()
 
     def train_loader(self):
         return torch.utils.data.DataLoader(self.train_dataset, batch_size=batch_size,
@@ -34,6 +35,10 @@ class ImagenetDataloader:
     def test_loader(self):
         return torch.utils.data.DataLoader(self.test_dataset, batch_size=batch_size,
                                            shuffle=True, num_workers=num_workers)
+
+    def external_test_loader(self):
+        return torch.utils.data.DataLoader(self.external_test_dataset, batch_size=batch_size,
+                                            shuffle=True, num_workers=num_workers)
 
 
 if __name__ == '__main__':
