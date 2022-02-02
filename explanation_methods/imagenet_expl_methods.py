@@ -5,8 +5,7 @@ drive, path = os.path.splitdrive(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(drive, os.sep, *path.split(os.sep)[:2]))
 from auxiliary.settings import seed, models, model_paths_imagenet
 from utils.utils import imagenet_class_from_idx, original_img_transform, \
-    attribution_transform, save_explanation_viz, get_last_layer, \
-    cifar10_class_from_idx, get_input_shape
+    attribution_transform, save_explanation_viz, get_last_layer
 import numpy as np
 import torch
 from explanation_methods.core.gradient import Gradient
@@ -17,9 +16,6 @@ from explanation_methods.core.input_x_gradient import InputXGradient
 from explanation_methods.core.deep_lift import DeepLift
 from explanation_methods.core.lime import Lime, featuremask
 from data.dataloaders.imagenet_dataloaders import ImagenetDataloader
-from data.dataloaders.cifar10_dataloaders import Cifar10Dataloader
-
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 # ----------------------------------------
@@ -100,7 +96,7 @@ class ImagenetExplanation:
     def save_this_explanation(self,
                               explanation_type="Gradients",
                               expl_attributions=None,
-                              method="blended_heat_map",
+                              method="heat_map",
                               sign="absolute_value",
                               show_colorbar=True,
                               use_pyplot=False,
@@ -208,7 +204,7 @@ if __name__ == '__main__':
         if ids:
             if idx in ids:
                 explanation = ImagenetExplanation(source_img=img,
-                                                  model_type='vgg_16',
+                                                  model_type='inception_v3',
                                                   explanations=['deeplift',
                                                                 'gradients',
                                                                 'integrated_gradients',

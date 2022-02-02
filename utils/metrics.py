@@ -1,7 +1,10 @@
 import os
 import sys
+
 drive, path = os.path.splitdrive(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, os.path.join(drive, os.sep, *path.split(os.sep)[:2]))
+
+import math
 from utils.core.Loss import Loss
 import torch
 from pytorch_msssim import SSIM
@@ -42,13 +45,33 @@ class SSIMLoss(Loss):
         return self._one - self.__ssim_loss(scale(img1), scale(img2)).to(self._device)
 
 
+def layer_distance(base_model, model, layer):
+    base_model_sd = base_model.state_dict()
+    model_sd = model.state_dict()
+    sub_layer_weights = []
+
+    for key in model_sd.keys():
+        if layer.lower() in key.lower():
+            if 'weight' in key:
+                sub_layer_weights.append(layer_weights_diff(tensor1=base_model_sd[key].float(),
+                                                            tensor2=model_sd[key].float()))
+
+    mean_sub_layer_diff = sum(sub_layer_weights) / len(sub_layer_weights)
+    return 1.0 - (1 / (1 + mean_sub_layer_diff))
+
+
 def layer_weights_diff(tensor1: Tensor, tensor2: Tensor) -> float:
     return float(torch.linalg.norm(tensor1 - tensor2))
 
 
-def ssim_loss(img1, img2):
+# def module_weights_diff(module, model) -> float:
 
-    data_range = img1.max() - img2.min()
-    return 1 - ms_ssim(img1, img2,
-                       data_range=data_range,
-                       size_average=True)
+def ssim(img1, img2):
+    data_range = img1.max() - img1.min()
+    ssim_score = abs(float(ms_ssim(img1, img2,
+                             data_range=data_range,
+                             size_average=True)))
+
+    if math.isnan(ssim_score):
+        ssim = 0
+    return ssim_score

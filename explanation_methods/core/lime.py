@@ -564,7 +564,7 @@ class LimeBase(PerturbationAttribution):
 def featuremask(img):
     if img.shape[-1] != 3:
         img = np.transpose(img.squeeze().cpu().detach().numpy(), (1, 2, 0))
-    superpixels = skimage.segmentation.quickshift(img,
+    superpixels = skimage.segmentation.quickshift(img.astype("double"),
                                                   kernel_size=4,
                                                   max_dist=200,
                                                   ratio=0.2)
@@ -819,7 +819,7 @@ class Lime(LimeBase):
 
         """
         if interpretable_model is None:
-            interpretable_model = SkLearnLasso(alpha=0.01)
+            interpretable_model = SkLearnLasso(alpha=0.01, tol=0.001, max_iter=2000)
 
         if similarity_func is None:
             similarity_func = get_exp_kernel_similarity_function()

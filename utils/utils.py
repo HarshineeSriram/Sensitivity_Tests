@@ -8,6 +8,25 @@ from auxiliary.paths import path_to_imagenet_labels
 from utils.visualization import visualize_image_attr
 
 """--------------------------------------------------------------
+  Temporary functions
+--------------------------------------------------------------"""
+
+
+def convert_tensor_str_to_float(string):
+    pos1, pos2 = (-1, -1)
+    for i in range(len(string)):
+        if '(' == string[i]:
+            pos1 = i + 1
+        if ',' == string[i]:
+            pos2 = i
+            break
+        if ')' == string[i]:
+            pos2 = i
+            break
+
+    return float(string[pos1:pos2])
+
+"""--------------------------------------------------------------
   Image Utilities
 --------------------------------------------------------------"""
 
@@ -46,6 +65,7 @@ def imagenet_train_transform():
 
 def imagenet_test_transform():
     return torchvision.transforms.Compose([
+        torchvision.transforms.Resize(224),
         torchvision.transforms.ToTensor(),
         image_normalization()
     ])
@@ -91,10 +111,12 @@ def attribution_transform(attribution):
 def get_last_layer(model_type='inception_v3', model=None):
     if model_type == 'inception_v3':
         return model.Mixed_7c
-    elif model_type == 'mobilenet_v3':
-        return list(model.children())[-3][-2]
+    elif model_type == 'mobilenet_v2':
+        return model._modules['features'][17]
     elif model_type == 'vgg_16':
-        return list(model.children())[-3][-3]
+        return model._modules['features'][28]
+    elif 'resnet' in model_type:
+        return model.layer4
 
 
 def get_last_layer_outputs_tf(model_type='inception_v3', model=None):
